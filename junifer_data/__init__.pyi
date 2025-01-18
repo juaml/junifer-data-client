@@ -1,5 +1,8 @@
 __all__ = [
-    "api",
+    "check_dataset",
+    "drop",
+    "get",
 ]
 
-from . import _functions as api
+from ._functions import drop, get
+from ._utils import check_dataset
