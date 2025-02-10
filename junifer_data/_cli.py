@@ -11,7 +11,7 @@ import click
 from . import _functions as cli_func
 
 
-__all__ = ["cli", "get"]
+__all__ = ["cli", "download", "drop", "get"]
 
 
 def _set_log_config(verbose: int) -> None:
@@ -107,3 +107,45 @@ def drop(
         click.echo(f"Failure: {err}", err=True)
     else:
         click.echo("Success")
+
+
+@cli.command
+@click.option(
+    "-d",
+    "--dataset_path",
+    default=None,
+    type=click.Path(file_okay=False, path_type=pathlib.Path),
+    metavar="<dataset>",
+    help="Path to dataset",
+)
+@click.option(
+    "-t",
+    "--tag",
+    default=None,
+    type=str,
+    metavar="<tag>",
+    help="Tag to checkout",
+)
+@click.option("-v", "--verbose", count=True, type=int)
+def download(
+    dataset_path: click.Path,
+    tag: str,
+    verbose: int,
+) -> None:
+    """Download complete dataset.
+
+    If not provided, <dataset> defaults to "$HOME/junifer_data/<tag>" and <tag>
+    defaults to "main".
+
+    """
+    _set_log_config(verbose)
+    try:
+        path = cli_func.get(
+            file_path=pathlib.Path("."),
+            dataset_path=dataset_path,
+            tag=tag,
+        )
+    except RuntimeError as err:
+        click.echo(f"Failure: {err}", err=True)
+    else:
+        click.echo(f"Success: {path.resolve()}")
