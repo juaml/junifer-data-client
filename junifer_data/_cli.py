@@ -11,7 +11,7 @@ import click
 from . import _functions as cli_func
 
 
-__all__ = ["cli", "get"]
+__all__ = ["cli", "download", "drop", "get"]
 
 
 def _set_log_config(verbose: int) -> None:
