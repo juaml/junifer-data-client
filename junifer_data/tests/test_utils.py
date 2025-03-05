@@ -36,13 +36,13 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
         check_dataset(data_dir=tmp_path, tag="1", hexsha="wrong")
 
     # Now clone the dataset without checking
-    dataset = check_dataset(data_dir=tmp_path, tag="1")
+    check_dataset(data_dir=tmp_path, tag="1")
 
     with pytest.raises(ValueError, match="Commit verification failed."):
         check_dataset(data_dir=tmp_path, tag="1", hexsha="wrong")
 
     # Check with the right hexsha
-    dataset = check_dataset(
+    check_dataset(
         data_dir=tmp_path,
         tag="1",
         hexsha="e9aecf7b5a2fff82de00d265e02afde42a448647",
