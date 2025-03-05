@@ -24,6 +24,7 @@ def get(
     file_path: Path,
     dataset_path: Optional[Path] = None,
     tag: Optional[str] = None,
+    hexsha: Optional[str] = None,
 ) -> Path:
     """Fetch ``file_path`` from junifer-data dataset.
 
@@ -38,6 +39,8 @@ def get(
     tag : str or None, optional
         Tag to checkout; for example, for ``v1.0.0``, pass ``"1.0.0"``.
         If None, ``"main"`` is checked out (default None).
+    hexsha: str or None, optional
+        Commit hash to verify. If None, no verification will be performed.
 
     Returns
     -------
@@ -48,10 +51,13 @@ def get(
     ------
     RuntimeError
         If there is a problem fetching the file.
+    ValueError
+        If `hexsha` is provided but does not match the checked out tag.
+        If `hexsha` is provided for the main tag.
 
     """
     # Get dataset
-    dataset = check_dataset(data_dir=dataset_path, tag=tag)
+    dataset = check_dataset(data_dir=dataset_path, tag=tag, hexsha=hexsha)
     # Fetch file
     try:
         got = dataset.get(file_path, result_renderer="disabled")
