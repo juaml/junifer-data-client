@@ -8,6 +8,17 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.2.0](https://github.com/juaml/junifer-data-client/tree/1.2.0) - 2025-03-06
+
+### Added
+
+- Add `hexsha` parameter for get operation via API and CLI and for `check_dataset` ([#3](https://github.com/juaml/junifer-data-client/issues/3))
+
+### Changed
+
+- Check commit hash instead of checking out state if dataset is installed ([#3](https://github.com/juaml/junifer-data-client/issues/3))
+
+
 ## [1.1.0](https://github.com/juaml/junifer-data-client/tree/1.1.0) - 2025-02-10
 
 ### Added
