@@ -89,6 +89,36 @@ def check_dataset(  # noqa: C901
                 ) from e
             else:
                 logger.debug("Successfully updated junifer-data")
+        else:
+            # Get commit hash for the tag
+            tag_hexsha = [
+                x["hexsha"]
+                for x in dataset.repo.get_tags()
+                if x["name"] == tag
+            ]
+            # Check for incorrect tags
+            if not tag_hexsha:
+                raise ValueError(f"Unknown tag: {tag} for junifer-data.")
+
+            # Get commit hash for HEAD
+            head_hexsha = dataset.repo.get_hexsha()
+            # Get tag hexsha
+            tag_hexsha = tag_hexsha[0]
+            # Check that it matches the expected hexsha from the tag info
+            if head_hexsha != tag_hexsha:
+                raise ValueError(
+                    f"Wrong commit checked out for tag: {tag}. "
+                    f"Expected: {tag_hexsha}, got: {head_hexsha}."
+                )
+
+            # Do hexsha verification for other tags if provided
+            # Check that the hexsha matches the expected hexsha from the user
+            # head_hexsha is now verified and can be used for checking
+            if hexsha is not None and head_hexsha != hexsha:
+                raise ValueError(
+                    f"Commit verification failed for tag: {tag}. "
+                    f"Expected: {head_hexsha}, got: {hexsha}."
+                )
     else:
         logger.debug(f"Cloning junifer-data to: {data_dir.resolve()}")
         # Clone dataset
@@ -116,24 +146,4 @@ def check_dataset(  # noqa: C901
         else:
             logger.debug("Successfully checked out state of junifer-data")
 
-    # Do hexsha verification
-    this_hexsha = dataset.repo.get_hexsha()  # type: ignore
-    tags_info = dataset.repo.get_tags()  # type: ignore
-    this_tag_hexsha = [x["hexsha"] for x in tags_info if x["name"] == tag]
-    if not this_tag_hexsha:
-        raise ValueError(f"Tag {tag} not found in junifer-data.")
-    this_tag_hexsha = this_tag_hexsha[0]
-    # Check that it matches the expected hexsha from the tag info
-    if this_hexsha != this_tag_hexsha:
-        raise ValueError(
-            f"Wrong commit checked out for tag {tag}. "
-            f"Expected {this_tag_hexsha}, got {this_hexsha}."
-        )
-
-    # Check that the hexsha matches the expected hexsha from the user
-    if hexsha is not None and this_hexsha != hexsha:
-        raise ValueError(
-            f"Commit verification failed for junifer-data {tag}. "
-            f"Expected {hexsha}, got {this_hexsha}."
-        )
     return dataset
