@@ -62,18 +62,27 @@ def cli() -> None:  # pragma: no cover
     metavar="<tag>",
     help="Tag to checkout",
 )
+@click.option(
+    "-s",
+    "--hexsha",
+    default=None,
+    type=str,
+    metavar="<hexsha>",
+    help="Commit hash to verify",
+)
 @click.option("-v", "--verbose", count=True, type=int)
 def get(
     file_path: click.Path,
     dataset_path: click.Path,
     tag: str,
+    hexsha: str,
     verbose: int,
 ) -> None:
     """Get FILE_PATH.
 
     FILE_PATH should be relative to <dataset>/<tag>, if provided.
     If not provided, <dataset> defaults to "$HOME/junifer_data/<tag>" and <tag>
-    defaults to "main".
+    defaults to "main". If <hexsha> is provided, commit hash is verified.
 
     """
     _set_log_config(verbose)
@@ -82,6 +91,7 @@ def get(
             file_path=file_path,
             dataset_path=dataset_path,
             tag=tag,
+            hexsha=hexsha,
         )
     except RuntimeError as err:
         click.echo(f"Failure: {err}", err=True)
