@@ -47,8 +47,9 @@ def check_dataset(  # noqa: C901
     RuntimeError
         If there is a problem checking the dataset.
     ValueError
-        If `hexsha` is provided but does not match the checked out tag.
-        If `hexsha` is provided for the main tag.
+        If ``hexsha`` is provided for the main tag or
+        if unknown tag is provided or
+        if ``hexsha`` is provided but does not match the checked out ``tag``.
 
     """
     # Check tag
@@ -57,6 +58,7 @@ def check_dataset(  # noqa: C901
     else:
         tag = "main"
 
+    # Avoid hexsha check for main
     if tag == "main" and hexsha is not None:
         raise ValueError("Cannot verify hexsha for main tag.")
 
@@ -71,7 +73,8 @@ def check_dataset(  # noqa: C901
     if dl.Dataset(data_dir).is_installed():
         logger.debug(f"Found existing junifer-data at: {data_dir.resolve()}")
         dataset = dl.Dataset(data_dir)
-        if dataset.repo.dirty:  # type: ignore
+        # Check if dataset is dirty
+        if dataset.repo.dirty:
             raise RuntimeError(
                 f"Found dirty junifer-data at: {data_dir.resolve()}"
                 " You can clean the repository or delete the directory."
@@ -90,7 +93,7 @@ def check_dataset(  # noqa: C901
         logger.debug(f"Cloning junifer-data to: {data_dir.resolve()}")
         # Clone dataset
         try:
-            dataset = dl.clone(  # type: ignore
+            dataset = dl.clone(
                 "https://github.com/juaml/junifer-data.git",
                 path=data_dir,
                 result_renderer="disabled",
