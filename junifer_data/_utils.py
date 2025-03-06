@@ -76,8 +76,8 @@ def check_dataset(  # noqa: C901
         # Check if dataset is dirty
         if dataset.repo.dirty:
             raise RuntimeError(
-                f"Found dirty junifer-data at: {data_dir.resolve()}"
-                " You can clean the repository or delete the directory."
+                f"Found dirty junifer-data at: {data_dir.resolve()} . "
+                "You can clean or delete the directory."
             )
         if tag == "main":
             # Main tag, use the latest commit
