@@ -8,6 +8,13 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.3.0](https://github.com/juaml/junifer-data-client/tree/1.3.0) - 2025-03-21
+
+### Added
+
+- Allow `junifer-data` to be accessed via `junifer` CLI ([#5](https://github.com/juaml/junifer-data-client/issues/5))
+
+
 ## [1.2.0](https://github.com/juaml/junifer-data-client/tree/1.2.0) - 2025-03-06
 
 ### Added
