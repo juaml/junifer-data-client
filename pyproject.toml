@@ -111,6 +111,8 @@ ignore = [
     "D107",
     # use specific rule codes when ignoring type issues
     "PGH003",
+    # ignore too complex expressions
+    "C901",
 ]
 
 [tool.ruff.lint.isort]
