@@ -35,7 +35,7 @@ def _set_log_config(verbose: int) -> None:
 
 
 @click.group
-@click.version_option()
+@click.version_option(prog_name="junifer-data")
 @click.help_option()
 def cli() -> None:  # pragma: no cover
     """junifer-data CLI client."""
