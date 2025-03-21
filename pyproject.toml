@@ -44,6 +44,9 @@ Source = "https://github.com/juaml/junifer-data-client"
 [project.scripts]
 junifer-data = "junifer_data._cli:cli"
 
+[project.entry-points."junifer.ext"]
+data = "junifer_data._cli:cli"
+
 [project.optional-dependencies]
 dev = [
     "tox",
