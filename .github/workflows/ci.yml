@@ -37,9 +37,7 @@ jobs:
         git config --global user.name "GitHub Runner"
 
     - name: Test with tox
-      # https://github.com/actions/checkout/issues/1169#issuecomment-2291682583
       run: |
-        git config --system --add safe.directory $(pwd)
         tox
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
