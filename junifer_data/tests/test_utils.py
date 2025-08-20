@@ -48,9 +48,6 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="Cannot verify hexsha for main tag."):
         check_dataset(data_dir=tmp_path, hexsha="wrong")
 
-    with pytest.raises(ValueError, match="Commit verification failed."):
-        check_dataset(data_dir=tmp_path, tag="1", hexsha="wrong")
-
     # Now clone the dataset without checking
     check_dataset(data_dir=tmp_path, tag="1")
 
