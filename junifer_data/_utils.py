@@ -18,7 +18,7 @@ __all__ = ["check_dataset"]
 logger = logging.getLogger(__name__)
 
 
-def check_dataset(  # noqa: C901
+def check_dataset(
     data_dir: Union[str, Path, None] = None,
     tag: Optional[str] = None,
     hexsha: Optional[str] = None,
