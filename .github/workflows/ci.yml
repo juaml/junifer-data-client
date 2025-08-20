@@ -21,8 +21,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Set up git-annex
       run: |
-        apt-get update
-        apt-get install -y git-annex
+        sudo apt-get update
+        sudo apt-get install -y git-annex
     - name: Install Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
