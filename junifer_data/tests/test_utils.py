@@ -45,13 +45,15 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
         Pytest fixture that provides a temporary directory.
 
     """
-    with pytest.raises(ValueError, match="Cannot verify hexsha for main tag."):
+    with pytest.raises(
+        ValueError, match=r"Cannot verify hexsha for main tag."
+    ):
         check_dataset(data_dir=tmp_path, hexsha="wrong")
 
     # Now clone the dataset without checking
     check_dataset(data_dir=tmp_path, tag="1")
 
-    with pytest.raises(ValueError, match="Commit verification failed."):
+    with pytest.raises(ValueError, match=r"Commit verification failed."):
         check_dataset(data_dir=tmp_path, tag="1", hexsha="wrong")
 
     # Check with the right hexsha
@@ -73,7 +75,7 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
     dataset.repo.add((ds_path / "test.txt").as_posix())
     dataset.repo.commit(msg="update")
 
-    with pytest.raises(ValueError, match="Wrong commit checked out."):
+    with pytest.raises(ValueError, match=r"Wrong commit checked out."):
         check_dataset(data_dir=tmp_path, tag="1")
 
     # Update tag
@@ -84,7 +86,7 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
     check_dataset(data_dir=tmp_path, tag="1")
 
     # But does not have the right hexsha
-    with pytest.raises(ValueError, match="Commit verification failed."):
+    with pytest.raises(ValueError, match=r"Commit verification failed."):
         check_dataset(
             data_dir=tmp_path,
             tag="1",
