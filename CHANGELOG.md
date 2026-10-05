@@ -8,6 +8,17 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.4.0](https://github.com/juaml/junifer-data-client/tree/1.4.0) - 2026-10-05
+
+### Added
+
+- Add unit tests and CI workflow ([#4](https://github.com/juaml/junifer-data-client/issues/4))
+
+### Changed
+
+- Fetch junifer-data from cerebra.fz-juelich.de instead of GitHub and migrate existing installations ([#5](https://github.com/juaml/junifer-data-client/issues/5))
+
+
 ## [1.3.0](https://github.com/juaml/junifer-data-client/tree/1.3.0) - 2025-03-21
 
 ### Added
