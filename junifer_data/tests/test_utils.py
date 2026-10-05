@@ -2,9 +2,11 @@
 
 from pathlib import Path
 
+import datalad.api as dl
 import pytest
 
 from junifer_data import check_dataset
+from junifer_data._utils import JUNIFER_DATA_URL
 
 
 def test_check_dataset_main(tmp_path: Path) -> None:
@@ -92,3 +94,38 @@ def test_check_dataset_hexsha_errors(tmp_path: Path) -> None:
             tag="1",
             hexsha="e9aecf7b5a2fff82de00d265e02afde42a448647",
         )
+
+
+def test_check_dataset_migrates_old_origin(tmp_path: Path) -> None:
+    """Test check_dataset migrates an installation cloned from GitHub.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+
+    """
+    dataset = check_dataset(data_dir=tmp_path)
+    repo = dataset.repo
+    # Simulate an installation cloned from GitHub
+    repo.call_git(
+        [
+            "remote",
+            "set-url",
+            "origin",
+            "https://github.com/juaml/junifer-data.git",
+        ]
+    )
+    repo.config.unset("remote.origin.annex-uuid", scope="local")
+    repo.config.set("remote.origin.annex-ignore", "true", scope="local")
+    # Add a user-configured remote, which should be preserved
+    mine = tmp_path / "mine"
+    dl.create(mine, annex=False, result_renderer="disabled")
+    repo.call_git(["remote", "add", "mine", mine.as_posix()])
+
+    dataset = check_dataset(data_dir=tmp_path)
+    config = dataset.repo.config
+    config.reload(force=True)
+    assert config.get("remote.origin.url") == JUNIFER_DATA_URL
+    assert "remote.origin.annex-ignore" not in config
+    assert config.get("remote.mine.url") == mine.as_posix()

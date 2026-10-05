@@ -18,6 +18,48 @@ __all__ = ["check_dataset"]
 logger = logging.getLogger(__name__)
 
 
+JUNIFER_DATA_URL = "https://cerebra.fz-juelich.de/junifer/junifer-data.git"
+
+# Previous locations of junifer-data, used to migrate existing installations
+_OLD_JUNIFER_DATA_URLS = (
+    "https://github.com/juaml/junifer-data",
+    "https://github.com/juaml/junifer-data.git",
+    "git@github.com:juaml/junifer-data.git",
+    "ssh://git@github.com/juaml/junifer-data.git",
+)
+
+
+def _migrate_origin(dataset: dl.Dataset) -> None:
+    """Point the ``origin`` remote of an old installation to the new URL.
+
+    Only ``origin`` is touched and only if it points to a known old
+    location; user-configured remotes are preserved.
+
+    Parameters
+    ----------
+    dataset : datalad.api.Dataset
+        The junifer-data dataset.
+
+    """
+    repo = dataset.repo
+    origin_url = repo.config.get("remote.origin.url")
+    if origin_url not in _OLD_JUNIFER_DATA_URLS:
+        return
+    logger.info(
+        f"Migrating junifer-data remote from {origin_url} to "
+        f"{JUNIFER_DATA_URL}"
+    )
+    repo.call_git(["remote", "set-url", "origin", JUNIFER_DATA_URL])
+    # GitHub cannot host annexed content, so git-annex marks it as ignored;
+    # drop the cached annex settings so the new remote gets probed again
+    for key in ("annex-ignore", "annex-uuid"):
+        if f"remote.origin.{key}" in repo.config:
+            repo.config.unset(
+                f"remote.origin.{key}", scope="local", reload=False
+            )
+    repo.config.reload(force=True)
+
+
 def check_dataset(
     data_dir: Union[str, Path, None] = None,
     tag: Optional[str] = None,
@@ -79,6 +121,7 @@ def check_dataset(
                 f"Found dirty junifer-data at: {data_dir.resolve()} . "
                 "You can clean or delete the directory."
             )
+        _migrate_origin(dataset)
         if tag == "main":
             # Main tag, use the latest commit
             try:
@@ -124,7 +167,7 @@ def check_dataset(
         # Clone dataset
         try:
             dataset = dl.clone(
-                "https://cerebra.fz-juelich.de/junifer/junifer-data.git",
+                JUNIFER_DATA_URL,
                 path=data_dir,
                 result_renderer="disabled",
             )
