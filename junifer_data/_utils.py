@@ -124,7 +124,7 @@ def check_dataset(
         # Clone dataset
         try:
             dataset = dl.clone(
-                "https://github.com/juaml/junifer-data.git",
+                "https://cerebra.fz-juelich.de/junifer/junifer-data.git",
                 path=data_dir,
                 result_renderer="disabled",
             )
