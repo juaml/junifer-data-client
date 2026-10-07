@@ -28,6 +28,12 @@ _OLD_JUNIFER_DATA_URLS = (
     "ssh://git@github.com/juaml/junifer-data.git",
 )
 
+# Retired GIN location, removed from existing installations
+_GIN_JUNIFER_DATA_URLS = (
+    "https://gin.g-node.org/synchon/junifer-data",
+    "https://gin.g-node.org/synchon/junifer-data.git",
+)
+
 
 def _migrate_origin(dataset: dl.Dataset) -> None:
     """Point the ``origin`` remote of an old installation to the new URL.
@@ -58,6 +64,28 @@ def _migrate_origin(dataset: dl.Dataset) -> None:
                 f"remote.origin.{key}", scope="local", reload=False
             )
     repo.config.reload(force=True)
+
+
+def _remove_gin_remotes(dataset: dl.Dataset) -> None:
+    """Remove remotes pointing to the retired GIN location.
+
+    Installations made before GIN was retired have it auto-enabled, and
+    tagged installations never fetch the git-annex branch that marks it as
+    dead. Only remotes pointing to a known GIN location are removed;
+    user-configured remotes are preserved.
+
+    Parameters
+    ----------
+    dataset : datalad.api.Dataset
+        The junifer-data dataset.
+
+    """
+    repo = dataset.repo
+    for remote in repo.get_remotes():
+        url = repo.config.get(f"remote.{remote}.url")
+        if url in _GIN_JUNIFER_DATA_URLS:
+            logger.info(f"Removing retired junifer-data remote: {url}")
+            repo.remove_remote(remote)
 
 
 def check_dataset(
@@ -122,6 +150,7 @@ def check_dataset(
                 "You can clean or delete the directory."
             )
         _migrate_origin(dataset)
+        _remove_gin_remotes(dataset)
         if tag == "main":
             # Main tag, use the latest commit
             try:
@@ -179,6 +208,7 @@ def check_dataset(
             logger.debug(
                 f"Successfully cloned junifer-data to: {data_dir.resolve()}"
             )
+        _remove_gin_remotes(dataset)
         # Checkout correct state
         try:
             dataset.recall_state(tag)
