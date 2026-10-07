@@ -129,3 +129,29 @@ def test_check_dataset_migrates_old_origin(tmp_path: Path) -> None:
     assert config.get("remote.origin.url") == JUNIFER_DATA_URL
     assert "remote.origin.annex-ignore" not in config
     assert config.get("remote.mine.url") == mine.as_posix()
+
+
+def test_check_dataset_removes_gin(tmp_path: Path) -> None:
+    """Test check_dataset removes the retired GIN remote.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+
+    """
+    dataset = check_dataset(data_dir=tmp_path, tag="7")
+    repo = dataset.repo
+    assert "gin-data" not in repo.get_remotes()
+
+    # Simulate a tagged installation made while GIN was auto-enabled
+    repo.add_remote("gin-data", "https://gin.g-node.org/synchon/junifer-data")
+    # Add a user-configured remote, which should be preserved
+    mine = tmp_path / "mine"
+    dl.create(mine, annex=False, result_renderer="disabled")
+    repo.add_remote("mine", mine.as_posix())
+
+    dataset = check_dataset(data_dir=tmp_path, tag="7")
+    remotes = dataset.repo.get_remotes()
+    assert "gin-data" not in remotes
+    assert "mine" in remotes
