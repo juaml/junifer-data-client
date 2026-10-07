@@ -8,6 +8,21 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.5.0](https://github.com/juaml/junifer-data-client/tree/1.5.0) - 2026-10-07
+
+### Added
+
+- Support Python 3.14 ([#13](https://github.com/juaml/junifer-data-client/issues/13))
+
+### Changed
+
+- Make repeated `get` calls much faster by checking each tagged dataset only once per process and skipping `datalad get` for files whose content is already present ([#13](https://github.com/juaml/junifer-data-client/issues/13))
+
+### Fixed
+
+- Remove the retired GIN remote from junifer-data installations ([#13](https://github.com/juaml/junifer-data-client/issues/13))
+
+
 ## [1.4.0](https://github.com/juaml/junifer-data-client/tree/1.4.0) - 2026-10-05
 
 ### Added
