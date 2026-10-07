@@ -104,9 +104,10 @@ def get(
         dataset_path=dataset_path, tag=tag, hexsha=hexsha
     )
     # Annexed files only exist once their content is present, so skip the
-    # (slow) datalad get if the file is already there
+    # (slow) datalad get if the file is already there; directories always
+    # exist, so they still go through datalad get
     local_path = dataset.pathobj / file_path
-    if local_path.exists():
+    if local_path.is_file():
         logger.debug(f"Found existing file: {local_path.resolve()}")
         return local_path
     # Fetch file

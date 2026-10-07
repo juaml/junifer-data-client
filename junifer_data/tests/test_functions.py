@@ -104,6 +104,24 @@ def test_get_skips_present_files(
     assert again.resolve() == fetched.resolve()
 
 
+def test_get_fetches_directories(tmp_path: Path, check_calls: list) -> None:
+    """Test get fetches directory contents even if the directory exists.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+    check_calls : list of dict
+        The calls to check_dataset.
+
+    """
+    dir_path = Path("parcellations/AICHA/v1")
+    file_path = tmp_path / "v1" / dir_path / "AICHAmc.nii.lut"
+    get(dir_path, dataset_path=tmp_path, tag="1")
+    # Annexed file content is present
+    assert file_path.is_file()
+
+
 def test_get_checks_removed_dataset(tmp_path: Path, check_calls: list) -> None:
     """Test get checks the dataset again if it was removed.
 
