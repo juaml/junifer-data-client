@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "junifer_data"
 description = "Python client for junifer-data"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = {text = "AGPL-3.0-only"}
 authors = [
     { name = "Synchon Mandal", email = "s.mandal@fz-juelich.de" },
@@ -21,8 +21,6 @@ classifiers = [
     "License :: OSI Approved",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
