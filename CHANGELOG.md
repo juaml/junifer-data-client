@@ -8,6 +8,17 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.6.0](https://github.com/juaml/junifer-data-client/tree/1.6.0) - 2026-10-08
+
+### Removed
+
+- Drop support for Python 3.9 and 3.10 ([#14](https://github.com/juaml/junifer-data-client/issues/14))
+
+### Changed
+
+- Allow click up to 8.5, datalad up to 1.7 and lazy_loader up to 0.6 ([#14](https://github.com/juaml/junifer-data-client/issues/14))
+
+
 ## [1.5.0](https://github.com/juaml/junifer-data-client/tree/1.5.0) - 2026-10-07
 
 ### Added
