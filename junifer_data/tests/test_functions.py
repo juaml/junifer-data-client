@@ -140,3 +140,81 @@ def test_get_checks_removed_dataset(tmp_path: Path, check_calls: list) -> None:
     )
     assert get(file_path, dataset_path=tmp_path, tag="1").exists()
     assert len(check_calls) == 2
+
+
+def test_has_content(tmp_path: Path) -> None:
+    """Test files only have content when it is not an annex pointer.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+
+    """
+    content = tmp_path / "content.txt"
+    content.write_text("some content")
+    assert _functions._has_content(content)
+    # Unlocked file without its content
+    pointer = tmp_path / "pointer.nii.gz"
+    pointer.write_text("/annex/objects/MD5E-s361253--7d0629e04eca7.nii.gz\n")
+    assert not _functions._has_content(pointer)
+    # Locked file without its content
+    broken = tmp_path / "broken.nii.gz"
+    broken.symlink_to(tmp_path / "missing")
+    assert not _functions._has_content(broken)
+    # Locked file with its content
+    locked = tmp_path / "locked.txt"
+    locked.symlink_to(content)
+    assert _functions._has_content(locked)
+    # Directories go through datalad get
+    assert not _functions._has_content(tmp_path)
+
+
+def test_annex_pointer_format(tmp_path: Path) -> None:
+    """Test git-annex pointer files are detected as without content.
+
+    Checks the format of the pointer files git-annex creates for unlocked
+    files without content, which ``_has_content`` relies on.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+
+    """
+    # Dataset with an unlocked annexed file
+    source = dl.create(tmp_path / "source", result_renderer="disabled")
+    source.repo.config.set("annex.addunlocked", "true", scope="local")
+    (source.pathobj / "data.bin").write_bytes(b"\x00binary content")
+    source.save(result_renderer="disabled")
+    # A clone has the pointer file until the content is fetched
+    clone = dl.clone(
+        source=source.path,
+        path=tmp_path / "clone",
+        result_renderer="disabled",
+    )
+    pointer = clone.pathobj / "data.bin"
+    assert pointer.read_bytes().startswith(_functions._ANNEX_POINTER_PREFIX)
+    assert not _functions._has_content(pointer)
+    clone.get("data.bin", result_renderer="disabled")
+    assert pointer.read_bytes() == b"\x00binary content"
+    assert _functions._has_content(pointer)
+
+
+def test_get_unlocked_file(tmp_path: Path) -> None:
+    """Test get fetches the content of unlocked files.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Pytest fixture that provides a temporary directory.
+
+    """
+    # Unlocked file, so a pointer file until its content is fetched
+    file_path = Path(
+        "parcellations/Schaefer2018/Yeo2011/"
+        "Schaefer2018_1000Parcels_17Networks_order_FSLMNI152_1mm.nii.gz"
+    )
+    fetched = get(file_path, dataset_path=tmp_path, tag="8")
+    # Gzip magic number
+    assert fetched.read_bytes()[:2] == b"\x1f\x8b"

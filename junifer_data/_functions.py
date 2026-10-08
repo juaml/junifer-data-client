@@ -18,8 +18,35 @@ __all__ = ["drop", "get"]
 
 logger = logging.getLogger(__name__)
 
+# Start of the pointer files of unlocked annexed files without content
+_ANNEX_POINTER_PREFIX = b"/annex/objects/"
+
 # Datasets already checked in this process, by (location, tag, hexsha)
 _checked_datasets: dict[tuple, dl.Dataset] = {}
+
+
+def _has_content(path: Path) -> bool:
+    """Check whether an annexed file has its content.
+
+    Locked files are symlinks to the content, so they only exist once the
+    content is present. Unlocked files are pointer files (with the path to
+    the annexed object) until the content is present.
+
+    Parameters
+    ----------
+    path : pathlib.Path
+        The path to the file.
+
+    Returns
+    -------
+    bool
+        Whether the file exists and has its content.
+
+    """
+    if not path.is_file():
+        return False
+    with path.open("rb") as f:
+        return f.read(len(_ANNEX_POINTER_PREFIX)) != _ANNEX_POINTER_PREFIX
 
 
 def _get_checked_dataset(
@@ -102,11 +129,10 @@ def get(
     dataset = _get_checked_dataset(
         dataset_path=dataset_path, tag=tag, hexsha=hexsha
     )
-    # Annexed files only exist once their content is present, so skip the
-    # (slow) datalad get if the file is already there; directories always
-    # exist, so they still go through datalad get
+    # Skip the (slow) datalad get if the file already has its content;
+    # directories always go through datalad get
     local_path = dataset.pathobj / file_path
-    if local_path.is_file():
+    if _has_content(local_path):
         logger.debug(f"Found existing file: {local_path.resolve()}")
         return local_path
     # Fetch file
