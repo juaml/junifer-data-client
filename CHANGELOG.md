@@ -8,6 +8,13 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [1.6.1](https://github.com/juaml/junifer-data-client/tree/1.6.1) - 2026-10-08
+
+### Fixed
+
+- Fix `get` returning the git-annex pointer file instead of the content for unlocked files, by checking whether existing files are pointer files before skipping `datalad get` ([#16](https://github.com/juaml/junifer-data-client/issues/16))
+
+
 ## [1.6.0](https://github.com/juaml/junifer-data-client/tree/1.6.0) - 2026-10-08
 
 ### Removed
