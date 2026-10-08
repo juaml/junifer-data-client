@@ -5,7 +5,6 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import datalad.api as dl
 from datalad.runner.exception import CommandError
@@ -24,9 +23,9 @@ _checked_datasets: dict[tuple, dl.Dataset] = {}
 
 
 def _get_checked_dataset(
-    dataset_path: Optional[Path],
-    tag: Optional[str],
-    hexsha: Optional[str],
+    dataset_path: Path | None,
+    tag: str | None,
+    hexsha: str | None,
 ) -> dl.Dataset:
     """Get the dataset, checking it only once per process.
 
@@ -65,9 +64,9 @@ def _get_checked_dataset(
 
 def get(
     file_path: Path,
-    dataset_path: Optional[Path] = None,
-    tag: Optional[str] = None,
-    hexsha: Optional[str] = None,
+    dataset_path: Path | None = None,
+    tag: str | None = None,
+    hexsha: str | None = None,
 ) -> Path:
     """Fetch ``file_path`` from junifer-data dataset.
 

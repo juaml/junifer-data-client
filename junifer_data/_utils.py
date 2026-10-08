@@ -5,7 +5,6 @@
 
 import logging
 from pathlib import Path
-from typing import Optional, Union
 
 import datalad.api as dl
 from datalad.runner.exception import CommandError
@@ -89,9 +88,9 @@ def _remove_gin_remotes(dataset: dl.Dataset) -> None:
 
 
 def check_dataset(
-    data_dir: Union[str, Path, None] = None,
-    tag: Optional[str] = None,
-    hexsha: Optional[str] = None,
+    data_dir: str | Path | None = None,
+    tag: str | None = None,
+    hexsha: str | None = None,
 ) -> dl.Dataset:
     """Get or install junifer-data dataset.
 
